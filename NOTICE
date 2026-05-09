@@ -1,0 +1,17 @@
+rattler_sandbox
+Copyright 2026 The rattler authors
+
+This product includes software developed by OpenAI as part of the
+Codex project (https://github.com/openai/codex), licensed under the
+Apache License, Version 2.0. See LICENSE for the full license text.
+
+The following modules are derived from Codex:
+  - src/policy.rs                 (codex-rs/protocol/src/permissions.rs,
+                                   models.rs, protocol.rs, config_types.rs)
+  - src/policy_transforms.rs      (codex-rs/sandboxing/src/policy_transforms.rs)
+  - src/manager.rs                (codex-rs/sandboxing/src/manager.rs)
+  - src/seatbelt.rs + *.sbpl      (codex-rs/sandboxing/src/seatbelt*)
+  - src/linux/                    (codex-rs/sandboxing/src/{bwrap,landlock}.rs
+                                   and codex-rs/linux-sandbox/src/*)
+  - src/windows/                  (codex-rs/windows-sandbox-rs/src/*)
+  - src/path.rs                   (codex-rs/utils/absolute-path/src/lib.rs)
