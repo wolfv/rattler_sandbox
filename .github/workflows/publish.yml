@@ -49,7 +49,7 @@ jobs:
         shell: bash
         run: |
           rattler-build upload prefix \
-            --channel wolfv \
+            --channel experimental-packages \
             ./output/${{ matrix.target }}/*.conda
 
       - name: Upload package as artifact

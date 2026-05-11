@@ -14,9 +14,9 @@ build:
   script:
     - if: unix
       then:
-        - cargo install --locked --root ${PREFIX} --path . --bin rattler-sandbox
+        - cargo install --no-track --locked --root ${PREFIX} --path . --bin rattler-sandbox
       else:
-        - cargo install --locked --root %LIBRARY_PREFIX% --path . --bins
+        - cargo install --no-track --locked --root %LIBRARY_PREFIX% --path . --bins
 
 requirements:
   build:
