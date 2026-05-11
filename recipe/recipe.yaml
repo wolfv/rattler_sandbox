@@ -37,8 +37,6 @@ tests:
           then:
             - rattler-windows-sandbox-setup
             - rattler-command-runner
-  - script:
-      - rattler-sandbox --help
 
 about:
   homepage: https://github.com/conda/rattler

@@ -41,6 +41,7 @@ jobs:
         run: |
           rattler-build build \
             --recipe recipe/recipe.yaml \
+            --variant-config recipe/variants.yaml \
             --output-dir ./output
 
       - name: Upload to prefix.dev (trusted publishing)
