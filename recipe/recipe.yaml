@@ -1,0 +1,54 @@
+context:
+  name: rattler-sandbox
+  version: "0.1.0"
+
+package:
+  name: ${{ name }}
+  version: ${{ version }}
+
+source:
+  path: ../
+
+build:
+  number: 0
+  script:
+    - if: unix
+      then:
+        - cargo install --locked --root ${PREFIX} --path . --bin rattler-sandbox
+      else:
+        - cargo install --locked --root %LIBRARY_PREFIX% --path . --bins
+
+requirements:
+  build:
+    - ${{ compiler('rust') }}
+    - if: linux
+      then:
+        - ${{ stdlib('c') }}
+  run:
+    - if: linux
+      then:
+        - bubblewrap
+
+tests:
+  - package_contents:
+      bin:
+        - rattler-sandbox
+        - if: win
+          then:
+            - rattler-windows-sandbox-setup
+            - rattler-command-runner
+  - script:
+      - rattler-sandbox --help
+
+about:
+  homepage: https://github.com/conda/rattler
+  repository: https://github.com/conda/rattler
+  license: Apache-2.0
+  license_file:
+    - LICENSE
+    - NOTICE
+  summary: A cross-platform sandbox for executing untrusted commands
+  description: |
+    A cross-platform sandbox for executing untrusted commands, derived from
+    OpenAI Codex. Backends: Seatbelt on macOS, bubblewrap + landlock + seccomp
+    on Linux, restricted token + WFP on Windows.

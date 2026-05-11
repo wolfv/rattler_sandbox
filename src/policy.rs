@@ -3049,6 +3049,7 @@ mod tests {
         assert!(FileSystemAccessMode::None > FileSystemAccessMode::Write);
     }
 
+    #[cfg(unix)]
     #[test]
     fn legacy_bridge_preserves_explicit_deny_entries() {
         let denied = AbsolutePathBuf::try_from("/tmp/private").expect("absolute path");
