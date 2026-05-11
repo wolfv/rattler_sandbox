@@ -17,6 +17,8 @@ use std::sync::atomic::Ordering;
 use std::thread;
 use std::time::Duration;
 
+use crate::error::CodexResult;
+use crate::linux::RATTLER_LINUX_SANDBOX_ARG0 as CODEX_LINUX_SANDBOX_ARG0;
 use crate::linux::bwrap_runner::BwrapNetworkMode;
 use crate::linux::bwrap_runner::BwrapOptions;
 use crate::linux::bwrap_runner::create_bwrap_command_args;
@@ -25,11 +27,9 @@ use crate::linux::launcher::exec_bwrap;
 use crate::linux::launcher::preferred_bwrap_supports_argv0;
 use crate::linux::proxy_routing::activate_proxy_routes_in_netns;
 use crate::linux::proxy_routing::prepare_host_proxy_route_spec;
-use crate::error::CodexResult as CodexResult;
-use crate::policy::PermissionProfile;
 use crate::policy::FileSystemSandboxPolicy;
 use crate::policy::NetworkSandboxPolicy;
-use crate::linux::RATTLER_LINUX_SANDBOX_ARG0 as CODEX_LINUX_SANDBOX_ARG0;
+use crate::policy::PermissionProfile;
 
 static BWRAP_CHILD_PID: AtomicI32 = AtomicI32::new(0);
 static PENDING_FORWARDED_SIGNAL: AtomicI32 = AtomicI32::new(0);
@@ -495,7 +495,9 @@ fn run_or_exec_bwrap(bwrap_args: crate::linux::bwrap_runner::BwrapArgs) -> ! {
     run_bwrap_in_child_with_synthetic_mount_cleanup(bwrap_args);
 }
 
-fn run_bwrap_in_child_with_synthetic_mount_cleanup(bwrap_args: crate::linux::bwrap_runner::BwrapArgs) -> ! {
+fn run_bwrap_in_child_with_synthetic_mount_cleanup(
+    bwrap_args: crate::linux::bwrap_runner::BwrapArgs,
+) -> ! {
     let crate::linux::bwrap_runner::BwrapArgs {
         args,
         preserved_files,
@@ -952,7 +954,9 @@ fn register_protected_create_targets(
     })
 }
 
-fn synthetic_mount_marker_contents(target: &crate::linux::bwrap_runner::SyntheticMountTarget) -> &'static [u8] {
+fn synthetic_mount_marker_contents(
+    target: &crate::linux::bwrap_runner::SyntheticMountTarget,
+) -> &'static [u8] {
     if target.preserves_pre_existing_path() {
         SYNTHETIC_MOUNT_MARKER_EXISTING
     } else {
@@ -1090,7 +1094,9 @@ fn cleanup_protected_create_targets(targets: &[ProtectedCreateTargetRegistration
     })
 }
 
-fn remove_protected_create_target(target: &crate::linux::bwrap_runner::ProtectedCreateTarget) -> bool {
+fn remove_protected_create_target(
+    target: &crate::linux::bwrap_runner::ProtectedCreateTarget,
+) -> bool {
     for attempt in 0..100 {
         match try_remove_protected_create_target(target) {
             Ok(removal) => return removal.is_some(),
@@ -1169,23 +1175,27 @@ fn remove_synthetic_mount_target(target: &crate::linux::bwrap_runner::SyntheticM
         return;
     }
     match target.kind() {
-        crate::linux::bwrap_runner::SyntheticMountTargetKind::EmptyFile => match fs::remove_file(path) {
-            Ok(()) => {}
-            Err(err) if err.kind() == std::io::ErrorKind::NotFound => {}
-            Err(err) => panic!(
-                "failed to remove synthetic bubblewrap mount target {}: {err}",
-                path.display()
-            ),
-        },
-        crate::linux::bwrap_runner::SyntheticMountTargetKind::EmptyDirectory => match fs::remove_dir(path) {
-            Ok(()) => {}
-            Err(err) if err.kind() == std::io::ErrorKind::NotFound => {}
-            Err(err) if err.kind() == std::io::ErrorKind::DirectoryNotEmpty => {}
-            Err(err) => panic!(
-                "failed to remove synthetic bubblewrap mount target {}: {err}",
-                path.display()
-            ),
-        },
+        crate::linux::bwrap_runner::SyntheticMountTargetKind::EmptyFile => {
+            match fs::remove_file(path) {
+                Ok(()) => {}
+                Err(err) if err.kind() == std::io::ErrorKind::NotFound => {}
+                Err(err) => panic!(
+                    "failed to remove synthetic bubblewrap mount target {}: {err}",
+                    path.display()
+                ),
+            }
+        }
+        crate::linux::bwrap_runner::SyntheticMountTargetKind::EmptyDirectory => {
+            match fs::remove_dir(path) {
+                Ok(()) => {}
+                Err(err) if err.kind() == std::io::ErrorKind::NotFound => {}
+                Err(err) if err.kind() == std::io::ErrorKind::DirectoryNotEmpty => {}
+                Err(err) => panic!(
+                    "failed to remove synthetic bubblewrap mount target {}: {err}",
+                    path.display()
+                ),
+            }
+        }
     }
 }
 

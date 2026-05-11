@@ -68,8 +68,7 @@ mod absolutize {
             path.push(std::path::MAIN_SEPARATOR_STR);
             return path;
         }
-        let skip_base_prefix =
-            matches!(base_path.components().next(), Some(Component::Prefix(_)));
+        let skip_base_prefix = matches!(base_path.components().next(), Some(Component::Prefix(_)));
         for component in base_path
             .components()
             .skip(usize::from(skip_base_prefix))
@@ -84,15 +83,7 @@ mod absolutize {
 /// A path that is guaranteed to be absolute and normalized (though not
 /// necessarily canonicalized or existing on disk).
 #[derive(
-    Debug,
-    Clone,
-    PartialEq,
-    Eq,
-    PartialOrd,
-    Ord,
-    Hash,
-    serde::Serialize,
-    serde::Deserialize,
+    Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, serde::Serialize, serde::Deserialize,
 )]
 #[serde(transparent)]
 pub struct AbsolutePathBuf(PathBuf);
@@ -131,7 +122,10 @@ impl AbsolutePathBuf {
     }
 
     pub fn relative_to_current_dir<P: AsRef<Path>>(path: P) -> std::io::Result<Self> {
-        Ok(Self::resolve_path_against_base(path, std::env::current_dir()?))
+        Ok(Self::resolve_path_against_base(
+            path,
+            std::env::current_dir()?,
+        ))
     }
 
     pub fn join<P: AsRef<Path>>(&self, path: P) -> Self {

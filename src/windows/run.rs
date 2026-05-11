@@ -5,8 +5,6 @@
 //! variant) plus the `CaptureResult` type — these are the entry points the
 //! caller invokes for direct (non-elevated) sandbox runs.
 
-#![cfg(target_os = "windows")]
-
 use crate::windows::acl::add_allow_ace;
 use crate::windows::acl::add_deny_write_ace;
 use crate::windows::acl::allow_null_device;
@@ -129,17 +127,14 @@ pub fn run_windows_sandbox_capture_with_extra_deny_write_paths(
     let logs_base_dir = common.logs_base_dir.as_deref();
     let is_workspace_write = common.is_workspace_write;
     if !policy.has_full_disk_read_access() {
-        anyhow::bail!(
-            "Restricted read-only access requires the elevated Windows sandbox backend"
-        );
+        anyhow::bail!("Restricted read-only access requires the elevated Windows sandbox backend");
     }
     let caps = load_or_create_cap_sids(codex_home)?;
     let (h_token, psid_generic, psid_workspace): (HANDLE, *mut c_void, Option<*mut c_void>) = unsafe {
         match &policy {
             SandboxPolicy::ReadOnly { .. } => {
                 #[allow(clippy::expect_used)]
-                let psid =
-                    convert_string_sid_to_sid(&caps.readonly).expect("valid readonly SID");
+                let psid = convert_string_sid_to_sid(&caps.readonly).expect("valid readonly SID");
                 let (h, _) = crate::windows::token::create_readonly_token_with_cap(psid)?;
                 (h, psid, None)
             }
@@ -406,7 +401,7 @@ pub fn run_windows_sandbox_legacy_preflight(
 #[cfg(test)]
 mod tests {
     use crate::policy::SandboxPolicy;
-    use crate::spawn_prep::should_apply_network_block;
+    use crate::windows::spawn_prep::should_apply_network_block;
 
     fn workspace_policy(network_access: bool) -> SandboxPolicy {
         SandboxPolicy::WorkspaceWrite {

@@ -1,6 +1,7 @@
 pub mod pipe;
 mod process;
 pub mod process_group;
+#[allow(clippy::module_inception)]
 pub mod pty;
 #[cfg(test)]
 mod tests;

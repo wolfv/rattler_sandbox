@@ -108,7 +108,11 @@ fn system_bwrap_has_user_namespace_access(system_bwrap_path: &Path, timeout: Dur
                     }
                     bytes
                 });
-                let output = Output { status, stdout: Vec::new(), stderr };
+                let output = Output {
+                    status,
+                    stdout: Vec::new(),
+                    stderr,
+                };
                 return output.status.success() || !is_user_namespace_failure(&output);
             }
             Ok(None) => {
@@ -152,7 +156,9 @@ fn proc_version_indicates_wsl1(proc_version: &str) -> bool {
 
 fn is_user_namespace_failure(output: &Output) -> bool {
     let stderr = String::from_utf8_lossy(&output.stderr);
-    USER_NAMESPACE_FAILURES.iter().any(|failure| stderr.contains(failure))
+    USER_NAMESPACE_FAILURES
+        .iter()
+        .any(|failure| stderr.contains(failure))
 }
 
 pub fn find_system_bwrap_in_path() -> Option<PathBuf> {
@@ -171,7 +177,11 @@ fn find_system_bwrap_in_search_paths(
         .ok()?
         .find_map(|path| {
             let path = std::fs::canonicalize(path).ok()?;
-            if path.starts_with(&cwd) { None } else { Some(path) }
+            if path.starts_with(&cwd) {
+                None
+            } else {
+                Some(path)
+            }
         })
 }
 

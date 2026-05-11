@@ -5,13 +5,13 @@ use crate::linux::run_main::install_bwrap_signal_forwarders;
 #[cfg(test)]
 use crate::linux::run_main::wait_for_bwrap_child;
 #[cfg(test)]
-use crate::policy::PermissionProfile;
+use crate::path::AbsolutePathBuf;
 #[cfg(test)]
 use crate::policy::FileSystemSandboxPolicy;
 #[cfg(test)]
 use crate::policy::NetworkSandboxPolicy;
 #[cfg(test)]
-use crate::path::AbsolutePathBuf;
+use crate::policy::PermissionProfile;
 #[cfg(test)]
 use pretty_assertions::assert_eq;
 
@@ -66,7 +66,7 @@ fn inserts_bwrap_argv0_before_command_separator() {
     apply_inner_command_argv0_for_launcher(
         &mut argv,
         /*supports_argv0*/ true,
-        "/tmp/codex-arg0-session/codex-linux-sandbox".to_string(),
+        "/tmp/rattler-arg0-session/rattler-linux-sandbox".to_string(),
     );
     assert_eq!(
         argv,
@@ -84,7 +84,7 @@ fn inserts_bwrap_argv0_before_command_separator() {
             "--proc".to_string(),
             "/proc".to_string(),
             "--argv0".to_string(),
-            "codex-linux-sandbox".to_string(),
+            "rattler-linux-sandbox".to_string(),
             "--".to_string(),
             "/bin/true".to_string(),
         ]
@@ -110,13 +110,13 @@ fn rewrites_inner_command_path_when_bwrap_lacks_argv0() {
     apply_inner_command_argv0_for_launcher(
         &mut argv,
         /*supports_argv0*/ false,
-        "/tmp/codex-arg0-session/codex-linux-sandbox".to_string(),
+        "/tmp/rattler-arg0-session/rattler-linux-sandbox".to_string(),
     );
 
     assert!(!argv.iter().any(|arg| arg == "--argv0"));
     assert!(
         argv.windows(2)
-            .any(|window| { window == ["--", "/tmp/codex-arg0-session/codex-linux-sandbox"] })
+            .any(|window| { window == ["--", "/tmp/rattler-arg0-session/rattler-linux-sandbox"] })
     );
 }
 
@@ -216,9 +216,7 @@ fn split_only_filesystem_policy_requires_direct_runtime_enforcement() {
     let policy = FileSystemSandboxPolicy::restricted(vec![
         crate::policy::FileSystemSandboxEntry {
             path: crate::policy::FileSystemPath::Special {
-                value: crate::policy::FileSystemSpecialPath::project_roots(
-                    /*subpath*/ None,
-                ),
+                value: crate::policy::FileSystemSpecialPath::project_roots(/*subpath*/ None),
             },
             access: crate::policy::FileSystemAccessMode::Write,
         },
@@ -345,8 +343,10 @@ fn cleanup_synthetic_mount_targets_removes_transient_file_after_concurrent_owner
     let active_marker = first_registrations[0].marker_dir.join("1");
     std::fs::write(&active_marker, SYNTHETIC_MOUNT_MARKER_SYNTHETIC).expect("write active marker");
     let metadata = std::fs::symlink_metadata(&empty_file).expect("stat empty file");
-    let second_target =
-        crate::linux::bwrap_runner::SyntheticMountTarget::existing_empty_file(&empty_file, &metadata);
+    let second_target = crate::linux::bwrap_runner::SyntheticMountTarget::existing_empty_file(
+        &empty_file,
+        &metadata,
+    );
     let second_registrations = register_synthetic_mount_targets(&[second_target]);
 
     cleanup_synthetic_mount_targets(&first_registrations);
@@ -364,10 +364,14 @@ fn cleanup_synthetic_mount_targets_preserves_real_pre_existing_empty_file() {
     let empty_file = temp_dir.path().join(".git");
     std::fs::write(&empty_file, "").expect("write pre-existing empty file");
     let metadata = std::fs::symlink_metadata(&empty_file).expect("stat empty file");
-    let first_target =
-        crate::linux::bwrap_runner::SyntheticMountTarget::existing_empty_file(&empty_file, &metadata);
-    let second_target =
-        crate::linux::bwrap_runner::SyntheticMountTarget::existing_empty_file(&empty_file, &metadata);
+    let first_target = crate::linux::bwrap_runner::SyntheticMountTarget::existing_empty_file(
+        &empty_file,
+        &metadata,
+    );
+    let second_target = crate::linux::bwrap_runner::SyntheticMountTarget::existing_empty_file(
+        &empty_file,
+        &metadata,
+    );
 
     let first_registrations = register_synthetic_mount_targets(&[first_target]);
     let second_registrations = register_synthetic_mount_targets(&[second_target]);

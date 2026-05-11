@@ -124,11 +124,14 @@ pub use linux::RATTLER_LINUX_SANDBOX_ARG0;
 
 /// Returns a warning string if the system bubblewrap is missing, broken, or
 /// the host is WSL1. Non-Linux platforms always return [`None`].
+#[cfg(target_os = "linux")]
+pub fn system_bwrap_warning(permissions: &PermissionProfile) -> Option<String> {
+    linux::system_bwrap_warning(permissions)
+}
+
+/// Returns a warning string if the system bubblewrap is missing, broken, or
+/// the host is WSL1. Non-Linux platforms always return [`None`].
+#[cfg(not(target_os = "linux"))]
 pub fn system_bwrap_warning(_permissions: &PermissionProfile) -> Option<String> {
-    #[cfg(target_os = "linux")]
-    {
-        return linux::system_bwrap_warning(_permissions);
-    }
-    #[cfg(not(target_os = "linux"))]
     None
 }

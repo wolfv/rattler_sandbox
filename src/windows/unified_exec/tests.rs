@@ -1,11 +1,11 @@
 #![cfg(target_os = "windows")]
 
-use super::spawn_windows_sandbox_session_legacy;
+use super::session::spawn_windows_sandbox_session_legacy;
+use crate::pty::ProcessDriver;
 use crate::windows::elevated::ipc_framed::Message;
 use crate::windows::elevated::ipc_framed::decode_bytes;
 use crate::windows::elevated::ipc_framed::read_frame;
-use crate::run_windows_sandbox_capture;
-use crate::pty::ProcessDriver;
+use crate::windows::run_windows_sandbox_capture;
 use pretty_assertions::assert_eq;
 use std::collections::HashMap;
 use std::fs;
@@ -107,11 +107,11 @@ fn wait_for_frame_count(frames_path: &Path, expected_frames: usize) -> Vec<Messa
 }
 
 async fn collect_stdout_and_exit(
-    spawned: codex_utils_pty::SpawnedProcess,
+    spawned: crate::pty::SpawnedProcess,
     codex_home: &Path,
     timeout_duration: Duration,
 ) -> (Vec<u8>, i32) {
-    let codex_utils_pty::SpawnedProcess {
+    let crate::pty::SpawnedProcess {
         session: _session,
         mut stdout_rx,
         stderr_rx: _stderr_rx,
@@ -225,7 +225,7 @@ fn finish_driver_spawn_keeps_stdin_open_when_requested() {
         let (exit_tx, exit_rx) = oneshot::channel::<i32>();
         drop(exit_tx);
 
-        let spawned = super::finish_driver_spawn(
+        let spawned = super::session::finish_driver_spawn(
             ProcessDriver {
                 writer_tx,
                 stdout_rx,
@@ -257,7 +257,7 @@ fn finish_driver_spawn_closes_stdin_when_not_requested() {
         let (exit_tx, exit_rx) = oneshot::channel::<i32>();
         drop(exit_tx);
 
-        let spawned = super::finish_driver_spawn(
+        let spawned = super::session::finish_driver_spawn(
             ProcessDriver {
                 writer_tx,
                 stdout_rx,
@@ -295,9 +295,9 @@ fn runner_stdin_writer_sends_close_stdin_after_input_eof() {
             .write(true)
             .open(&frames_path)
             .expect("create frame file");
-        let outbound_tx = super::start_runner_pipe_writer(file);
+        let outbound_tx = super::session::start_runner_pipe_writer(file);
         let (writer_tx, writer_rx) = mpsc::channel::<Vec<u8>>(1);
-        let writer_handle = super::start_runner_stdin_writer(
+        let writer_handle = super::session::start_runner_stdin_writer(
             writer_rx,
             outbound_tx,
             /*normalize_newlines*/ false,
@@ -341,10 +341,10 @@ fn runner_resizer_sends_resize_frame() {
             .write(true)
             .open(&frames_path)
             .expect("create frame file");
-        let outbound_tx = super::start_runner_pipe_writer(file);
-        let mut resizer = super::make_runner_resizer(outbound_tx);
+        let outbound_tx = super::session::start_runner_pipe_writer(file);
+        let mut resizer = super::session::make_runner_resizer(outbound_tx);
 
-        resizer(codex_utils_pty::TerminalSize {
+        resizer(crate::pty::TerminalSize {
             rows: 45,
             cols: 132,
         })

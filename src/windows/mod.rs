@@ -113,8 +113,7 @@ pub(crate) mod run;
 #[cfg(target_os = "windows")]
 pub use run::{
     CaptureResult, run_windows_sandbox_capture,
-    run_windows_sandbox_capture_with_extra_deny_write_paths,
-    run_windows_sandbox_legacy_preflight,
+    run_windows_sandbox_capture_with_extra_deny_write_paths, run_windows_sandbox_legacy_preflight,
 };
 
 #[cfg(target_os = "windows")]
@@ -133,20 +132,14 @@ pub mod bins {
 #[cfg(target_os = "windows")]
 pub use conpty::{ConptyInstance, spawn_conpty_process_as_user};
 #[cfg(target_os = "windows")]
-pub use unified_exec::session::{
-    spawn_windows_sandbox_session_elevated, spawn_windows_sandbox_session_legacy,
-};
-#[cfg(target_os = "windows")]
-pub use elevated_impl::{
-    ElevatedSandboxCaptureRequest, run_windows_sandbox_capture as run_windows_sandbox_capture_elevated,
-};
-#[cfg(target_os = "windows")]
-#[doc(hidden)]
-pub use spawn_prep::LocalSid;
-#[cfg(target_os = "windows")]
 pub use elevated::ipc_framed::{
     ErrorPayload, ExitPayload, FramedMessage, Message, OutputPayload, OutputStream, ResizePayload,
     SpawnReady, SpawnRequest, decode_bytes, encode_bytes, read_frame, write_frame,
+};
+#[cfg(target_os = "windows")]
+pub use elevated_impl::{
+    ElevatedSandboxCaptureRequest,
+    run_windows_sandbox_capture as run_windows_sandbox_capture_elevated,
 };
 #[cfg(target_os = "windows")]
 pub use helper_materialization::resolve_current_exe_for_launch;
@@ -154,15 +147,6 @@ pub use helper_materialization::resolve_current_exe_for_launch;
 pub use hide_users::{hide_current_user_profile_dir, hide_newly_created_users};
 #[cfg(target_os = "windows")]
 pub use identity::{require_logon_sandbox_creds, sandbox_setup_is_complete};
-#[cfg(target_os = "windows")]
-pub use setup_orchestrator::{
-    SETUP_VERSION, SandboxSetupRequest, SetupRootOverrides, run_elevated_setup, run_setup_refresh,
-    run_setup_refresh_with_extra_read_roots, sandbox_bin_dir, sandbox_dir, sandbox_secrets_dir,
-};
-#[cfg(target_os = "windows")]
-pub use wfp::install_wfp_filters_for_account;
-#[cfg(target_os = "windows")]
-pub use wfp_setup::install_wfp_filters;
 #[cfg(target_os = "windows")]
 pub use logging::{LOG_FILE_NAME, log_note};
 #[cfg(target_os = "windows")]
@@ -180,12 +164,28 @@ pub use setup_error::{
     sanitize_setup_metric_tag_value, setup_error_path, write_setup_error_report,
 };
 #[cfg(target_os = "windows")]
+pub use setup_orchestrator::{
+    SETUP_VERSION, SandboxSetupRequest, SetupRootOverrides, run_elevated_setup, run_setup_refresh,
+    run_setup_refresh_with_extra_read_roots, sandbox_bin_dir, sandbox_dir, sandbox_secrets_dir,
+};
+#[cfg(target_os = "windows")]
+#[doc(hidden)]
+pub use spawn_prep::LocalSid;
+#[cfg(target_os = "windows")]
 pub use token::{
     convert_string_sid_to_sid, create_readonly_token_with_cap_from,
     create_readonly_token_with_caps_and_user_from, create_readonly_token_with_caps_from,
     create_workspace_write_token_with_caps_and_user_from,
     create_workspace_write_token_with_caps_from, get_current_token_for_restriction,
 };
+#[cfg(target_os = "windows")]
+pub use unified_exec::session::{
+    spawn_windows_sandbox_session_elevated, spawn_windows_sandbox_session_legacy,
+};
+#[cfg(target_os = "windows")]
+pub use wfp::install_wfp_filters_for_account;
+#[cfg(target_os = "windows")]
+pub use wfp_setup::install_wfp_filters;
 #[cfg(target_os = "windows")]
 pub use winutil::{quote_windows_arg, string_from_sid_bytes, to_wide};
 #[cfg(target_os = "windows")]

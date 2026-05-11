@@ -1,4 +1,3 @@
-use crate::windows::identity::SandboxCreds;
 use crate::windows::elevated::ipc_framed::FramedMessage;
 use crate::windows::elevated::ipc_framed::Message;
 use crate::windows::elevated::ipc_framed::SpawnRequest;
@@ -10,6 +9,7 @@ use crate::windows::elevated::runner_pipe::connect_pipe;
 use crate::windows::elevated::runner_pipe::create_named_pipe;
 use crate::windows::elevated::runner_pipe::find_runner_exe;
 use crate::windows::elevated::runner_pipe::pipe_pair;
+use crate::windows::identity::SandboxCreds;
 use crate::windows::winutil::quote_windows_arg;
 use crate::windows::winutil::to_wide;
 use anyhow::Context;

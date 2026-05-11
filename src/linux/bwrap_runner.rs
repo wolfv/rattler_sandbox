@@ -26,13 +26,13 @@ use std::process::Command;
 
 use crate::error::CodexErr;
 use crate::error::CodexResult as Result;
-use crate::policy::is_protected_metadata_name;
+use crate::path::AbsolutePathBuf;
 use crate::policy::FileSystemAccessMode;
 use crate::policy::FileSystemPath;
 use crate::policy::FileSystemSandboxPolicy;
 use crate::policy::FileSystemSpecialPath;
 use crate::policy::WritableRoot;
-use crate::path::AbsolutePathBuf;
+use crate::policy::is_protected_metadata_name;
 use globset::GlobBuilder;
 use globset::GlobSet;
 use globset::GlobSetBuilder;
@@ -1328,12 +1328,12 @@ fn find_first_non_existent_component(target_path: &Path) -> Option<PathBuf> {
 mod tests {
     use super::*;
 
-use crate::policy::FileSystemAccessMode;
-use crate::policy::FileSystemPath;
+    use crate::path::AbsolutePathBuf;
+    use crate::policy::FileSystemAccessMode;
+    use crate::policy::FileSystemPath;
     use crate::policy::FileSystemSandboxEntry;
-use crate::policy::FileSystemSandboxPolicy;
-use crate::policy::FileSystemSpecialPath;
-use crate::path::AbsolutePathBuf;
+    use crate::policy::FileSystemSandboxPolicy;
+    use crate::policy::FileSystemSpecialPath;
     use pretty_assertions::assert_eq;
     use tempfile::TempDir;
 

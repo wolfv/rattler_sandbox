@@ -10,8 +10,7 @@
 #![cfg(target_os = "windows")]
 #![allow(unsafe_op_in_unsafe_fn)]
 
-use anyhow::Context;
-use anyhow::Result;
+use crate::policy::SandboxPolicy;
 use crate::windows::ErrorPayload;
 use crate::windows::ExitPayload;
 use crate::windows::FramedMessage;
@@ -21,7 +20,6 @@ use crate::windows::OutputPayload;
 use crate::windows::OutputStream;
 use crate::windows::PipeSpawnHandles;
 use crate::windows::ResizePayload;
-use crate::policy::SandboxPolicy;
 use crate::windows::SpawnReady;
 use crate::windows::SpawnRequest;
 use crate::windows::StderrMode;
@@ -40,6 +38,8 @@ use crate::windows::read_handle_loop;
 use crate::windows::spawn_process_with_pipes;
 use crate::windows::to_wide;
 use crate::windows::write_frame;
+use anyhow::Context;
+use anyhow::Result;
 use std::fs::File;
 use std::os::windows::io::FromRawHandle;
 use std::path::Path;
@@ -70,12 +70,8 @@ use windows_sys::Win32::System::Threading::PROCESS_INFORMATION;
 use windows_sys::Win32::System::Threading::TerminateProcess;
 use windows_sys::Win32::System::Threading::WaitForSingleObject;
 
-#[path = "cwd_junction.rs"]
-mod cwd_junction;
-
-#[allow(dead_code)]
-#[path = "../read_acl_mutex.rs"]
-mod read_acl_mutex;
+use crate::windows::elevated::cwd_junction;
+use crate::windows::read_acl_mutex;
 
 const WAIT_TIMEOUT: u32 = 0x0000_0102;
 

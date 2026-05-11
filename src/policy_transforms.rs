@@ -65,7 +65,9 @@ pub(crate) fn permission_profile_to_legacy_sandbox_policy(
         .get_writable_roots_with_cwd(cwd)
         .is_empty()
     {
-        return Ok(SandboxPolicy::ReadOnly { network_access: net });
+        return Ok(SandboxPolicy::ReadOnly {
+            network_access: net,
+        });
     }
     // Workspace-write fallback. Writable roots come from the policy's own
     // resolved entries.

@@ -42,9 +42,7 @@ pub(crate) fn exec_bwrap(argv: Vec<String>, preserved_files: Vec<File>) -> ! {
             exec_system_bwrap(&launcher.program, argv, preserved_files)
         }
         BubblewrapLauncher::Unavailable => {
-            panic!(
-                "bubblewrap is unavailable: install `bwrap` on PATH (e.g. via conda-forge)"
-            )
+            panic!("bubblewrap is unavailable: install `bwrap` on PATH (e.g. via conda-forge)")
         }
     }
 }
@@ -74,8 +72,10 @@ fn system_bwrap_launcher_for_path_with_probe(
     if !system_bwrap_path.is_file() {
         return None;
     }
-    let Some(SystemBwrapCapabilities { supports_argv0, supports_perms: true }) =
-        system_bwrap_capabilities(system_bwrap_path)
+    let Some(SystemBwrapCapabilities {
+        supports_argv0,
+        supports_perms: true,
+    }) = system_bwrap_capabilities(system_bwrap_path)
     else {
         return None;
     };
@@ -86,7 +86,10 @@ fn system_bwrap_launcher_for_path_with_probe(
             system_bwrap_path.display()
         ),
     };
-    Some(SystemBwrapLauncher { program: system_bwrap_path, supports_argv0 })
+    Some(SystemBwrapLauncher {
+        program: system_bwrap_path,
+        supports_argv0,
+    })
 }
 
 pub(crate) fn preferred_bwrap_supports_argv0() -> bool {
@@ -154,9 +157,15 @@ mod tests {
         let expected = AbsolutePathBuf::from_absolute_path(fake_bwrap_path).expect("absolute");
         assert_eq!(
             system_bwrap_launcher_for_path_with_probe(fake_bwrap_path, |_| {
-                Some(SystemBwrapCapabilities { supports_argv0: true, supports_perms: true })
+                Some(SystemBwrapCapabilities {
+                    supports_argv0: true,
+                    supports_perms: true,
+                })
             }),
-            Some(SystemBwrapLauncher { program: expected, supports_argv0: true })
+            Some(SystemBwrapLauncher {
+                program: expected,
+                supports_argv0: true
+            })
         );
     }
 
@@ -166,7 +175,10 @@ mod tests {
         let fake_bwrap_path = fake_bwrap.path();
         assert_eq!(
             system_bwrap_launcher_for_path_with_probe(fake_bwrap_path, |_| {
-                Some(SystemBwrapCapabilities { supports_argv0: false, supports_perms: true })
+                Some(SystemBwrapCapabilities {
+                    supports_argv0: false,
+                    supports_perms: true,
+                })
             }),
             Some(SystemBwrapLauncher {
                 program: AbsolutePathBuf::from_absolute_path(fake_bwrap_path).expect("absolute"),
@@ -180,7 +192,10 @@ mod tests {
         let fake_bwrap = NamedTempFile::new().expect("temp file");
         assert_eq!(
             system_bwrap_launcher_for_path_with_probe(fake_bwrap.path(), |_| {
-                Some(SystemBwrapCapabilities { supports_argv0: false, supports_perms: false })
+                Some(SystemBwrapCapabilities {
+                    supports_argv0: false,
+                    supports_perms: false,
+                })
             }),
             None
         );

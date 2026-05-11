@@ -9,8 +9,8 @@
 
 use super::backends;
 
-use anyhow::Result;
 use crate::pty::SpawnedProcess;
+use anyhow::Result;
 use std::collections::HashMap;
 use std::path::Path;
 
@@ -78,6 +78,3 @@ pub(crate) use backends::windows_common::make_runner_resizer;
 pub(crate) use backends::windows_common::start_runner_pipe_writer;
 #[cfg(test)]
 pub(crate) use backends::windows_common::start_runner_stdin_writer;
-
-#[cfg(test)]
-mod tests;

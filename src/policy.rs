@@ -107,7 +107,9 @@ impl FromStr for SandboxPolicy {
 
 impl SandboxPolicy {
     pub fn new_read_only_policy() -> Self {
-        SandboxPolicy::ReadOnly { network_access: false }
+        SandboxPolicy::ReadOnly {
+            network_access: false,
+        }
     }
 
     pub fn new_workspace_write_policy() -> Self {
@@ -119,11 +121,15 @@ impl SandboxPolicy {
         }
     }
 
-    pub fn has_full_disk_read_access(&self) -> bool { true }
+    pub fn has_full_disk_read_access(&self) -> bool {
+        true
+    }
 
     pub fn has_full_disk_write_access(&self) -> bool {
-        matches!(self,
-            SandboxPolicy::DangerFullAccess | SandboxPolicy::ExternalSandbox { .. })
+        matches!(
+            self,
+            SandboxPolicy::DangerFullAccess | SandboxPolicy::ExternalSandbox { .. }
+        )
     }
 
     pub fn has_full_network_access(&self) -> bool {
@@ -149,9 +155,13 @@ impl SandboxPolicy {
                 let mut roots: Vec<AbsolutePathBuf> = writable_roots.clone();
                 match AbsolutePathBuf::from_absolute_path(cwd) {
                     Ok(p) => roots.push(p),
-                    Err(e) => error!("Ignoring invalid cwd {:?} for sandbox writable root: {}", cwd, e),
+                    Err(e) => error!(
+                        "Ignoring invalid cwd {:?} for sandbox writable root: {}",
+                        cwd, e
+                    ),
                 }
-                if cfg!(unix) && !exclude_slash_tmp
+                if cfg!(unix)
+                    && !exclude_slash_tmp
                     && let Ok(slash_tmp) = AbsolutePathBuf::from_absolute_path("/tmp")
                     && slash_tmp.as_path().is_dir()
                 {
@@ -169,9 +179,8 @@ impl SandboxPolicy {
                 roots
                     .into_iter()
                     .map(|writable_root| {
-                        let protect_missing_dot_codex = cwd_root
-                            .as_ref()
-                            .is_some_and(|c| c == &writable_root);
+                        let protect_missing_dot_codex =
+                            cwd_root.as_ref().is_some_and(|c| c == &writable_root);
                         WritableRoot {
                             read_only_subpaths: default_read_only_subpaths_for_writable_root(
                                 &writable_root,
@@ -241,7 +250,10 @@ pub struct PermissionProfile {
 
 impl PermissionProfile {
     pub fn new(file_system: FileSystemSandboxPolicy, network: NetworkSandboxPolicy) -> Self {
-        Self { file_system, network }
+        Self {
+            file_system,
+            network,
+        }
     }
 
     pub fn unrestricted() -> Self {
@@ -285,7 +297,10 @@ impl PermissionProfile {
         file_system: &FileSystemSandboxPolicy,
         network: NetworkSandboxPolicy,
     ) -> Self {
-        Self { file_system: file_system.clone(), network }
+        Self {
+            file_system: file_system.clone(),
+            network,
+        }
     }
 
     /// Best-effort conversion to a legacy [`SandboxPolicy`].

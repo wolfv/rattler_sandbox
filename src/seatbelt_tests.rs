@@ -12,6 +12,7 @@ use super::normalize_path_for_sandbox;
 use super::seatbelt_regex_for_unreadable_glob;
 use super::unix_socket_dir_params;
 use super::unix_socket_policy;
+use crate::path::AbsolutePathBuf;
 use crate::policy::FileSystemAccessMode;
 use crate::policy::FileSystemPath;
 use crate::policy::FileSystemSandboxEntry;
@@ -20,7 +21,6 @@ use crate::policy::FileSystemSpecialPath;
 use crate::policy::NetworkSandboxPolicy;
 use crate::policy::PROTECTED_METADATA_PATH_NAMES;
 use crate::policy::SandboxPolicy;
-use crate::path::AbsolutePathBuf;
 use pretty_assertions::assert_eq;
 use std::fs;
 use std::path::Path;
@@ -564,7 +564,6 @@ fn create_seatbelt_args_allowlists_explicit_unix_socket_paths_without_proxy() {
 }
 
 // (removed: proxy-state-dependent test relies on stripped codex_network_proxy runtime)
-
 
 #[test]
 fn create_seatbelt_args_preserves_full_network_with_explicit_unix_socket_paths() {

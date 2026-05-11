@@ -1,5 +1,8 @@
 use super::windows_common::finish_driver_spawn;
 use super::windows_common::normalize_windows_tty_input;
+use crate::pty::ProcessDriver;
+use crate::pty::SpawnedProcess;
+use crate::pty::TerminalSize;
 use crate::windows::acl::revoke_ace;
 use crate::windows::conpty::ConptyInstance;
 use crate::windows::conpty::spawn_conpty_process_as_user;
@@ -16,9 +19,6 @@ use crate::windows::spawn_prep::apply_legacy_session_acl_rules;
 use crate::windows::spawn_prep::prepare_legacy_session_security;
 use crate::windows::spawn_prep::prepare_legacy_spawn_context;
 use anyhow::Result;
-use crate::pty::ProcessDriver;
-use crate::pty::SpawnedProcess;
-use crate::pty::TerminalSize;
 use std::collections::HashMap;
 use std::path::Path;
 use std::path::PathBuf;

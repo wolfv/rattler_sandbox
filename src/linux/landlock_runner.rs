@@ -8,9 +8,9 @@ use std::path::Path;
 use crate::error::CodexErr;
 use crate::error::CodexResult as Result;
 use crate::error::SandboxErr;
-use crate::policy::PermissionProfile;
-use crate::policy::NetworkSandboxPolicy;
 use crate::path::AbsolutePathBuf;
+use crate::policy::NetworkSandboxPolicy;
+use crate::policy::PermissionProfile;
 
 use landlock::ABI;
 #[allow(unused_imports)]
@@ -271,7 +271,7 @@ mod tests {
     use super::NetworkSeccompMode;
     use super::network_seccomp_mode;
     use super::should_install_network_seccomp;
-use crate::policy::NetworkSandboxPolicy;
+    use crate::policy::NetworkSandboxPolicy;
     use pretty_assertions::assert_eq;
 
     #[test]

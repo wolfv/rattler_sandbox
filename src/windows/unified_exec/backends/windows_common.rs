@@ -1,3 +1,7 @@
+use crate::pty::ProcessDriver;
+use crate::pty::SpawnedProcess;
+use crate::pty::TerminalSize;
+use crate::pty::spawn_from_driver;
 use crate::windows::elevated::ipc_framed::EmptyPayload;
 use crate::windows::elevated::ipc_framed::FramedMessage;
 use crate::windows::elevated::ipc_framed::Message;
@@ -7,10 +11,6 @@ use crate::windows::elevated::ipc_framed::StdinPayload;
 use crate::windows::elevated::ipc_framed::decode_bytes;
 use crate::windows::elevated::ipc_framed::encode_bytes;
 use anyhow::Result;
-use crate::pty::ProcessDriver;
-use crate::pty::SpawnedProcess;
-use crate::pty::TerminalSize;
-use crate::pty::spawn_from_driver;
 use std::fs::File;
 use tokio::sync::broadcast;
 use tokio::sync::mpsc;

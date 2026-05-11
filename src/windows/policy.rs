@@ -38,11 +38,9 @@ mod tests {
 
     #[test]
     fn rejects_external_sandbox_json() {
-        let payload = serde_json::to_string(
-            &codex_protocol::protocol::SandboxPolicy::ExternalSandbox {
-                network_access: codex_protocol::protocol::NetworkAccess::Enabled,
-            },
-        )
+        let payload = serde_json::to_string(&SandboxPolicy::ExternalSandbox {
+            network_access: crate::policy::NetworkAccess::Enabled,
+        })
         .unwrap();
         let err = parse_policy(&payload).unwrap_err();
         assert!(err

@@ -133,10 +133,8 @@ impl SandboxManager {
                     network_policy,
                     has_managed_network_requirements,
                 ) {
-                    get_platform_sandbox(
-                        windows_sandbox_level != WindowsSandboxLevel::Disabled,
-                    )
-                    .unwrap_or(SandboxType::None)
+                    get_platform_sandbox(windows_sandbox_level != WindowsSandboxLevel::Disabled)
+                        .unwrap_or(SandboxType::None)
                 } else {
                     SandboxType::None
                 }
@@ -274,14 +272,13 @@ impl SandboxManager {
         request: &SandboxExecRequest,
         codex_home: &Path,
     ) -> anyhow::Result<crate::windows::CaptureResult> {
-        let policy_json = serde_json::to_string(
-            &crate::compatibility_sandbox_policy_for_permission_profile(
+        let policy_json =
+            serde_json::to_string(&crate::compatibility_sandbox_policy_for_permission_profile(
                 &request.permission_profile,
                 &request.file_system_sandbox_policy,
                 request.network_sandbox_policy,
                 request.cwd.as_path(),
-            ),
-        )?;
+            ))?;
         crate::windows::run_windows_sandbox_capture(
             &policy_json,
             request.cwd.as_path(),
@@ -296,7 +293,9 @@ impl SandboxManager {
 }
 
 fn os_argv_to_strings(argv: Vec<OsString>) -> Vec<String> {
-    argv.into_iter().map(os_string_to_command_component).collect()
+    argv.into_iter()
+        .map(os_string_to_command_component)
+        .collect()
 }
 
 fn os_string_to_command_component(value: OsString) -> String {
@@ -315,7 +314,6 @@ fn linux_sandbox_arg0_override(exe: &Path) -> String {
         crate::linux::RATTLER_LINUX_SANDBOX_ARG0.to_string()
     }
 }
-
 
 #[cfg(target_os = "linux")]
 fn ensure_linux_bubblewrap_is_supported(
@@ -341,9 +339,11 @@ pub fn compatibility_sandbox_policy_for_permission_profile(
     network_policy: NetworkSandboxPolicy,
     cwd: &Path,
 ) -> SandboxPolicy {
-    permissions.to_legacy_sandbox_policy(cwd).unwrap_or_else(|_| {
-        compatibility_workspace_write_policy(file_system_policy, network_policy, cwd)
-    })
+    permissions
+        .to_legacy_sandbox_policy(cwd)
+        .unwrap_or_else(|_| {
+            compatibility_workspace_write_policy(file_system_policy, network_policy, cwd)
+        })
 }
 
 fn compatibility_workspace_write_policy(

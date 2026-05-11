@@ -1,8 +1,6 @@
 #![cfg(target_os = "windows")]
 
-#[path = "wfp_filter_specs.rs"]
-mod filter_specs;
-
+use crate::windows::wfp_filter_specs as filter_specs;
 use crate::windows::winutil::to_wide;
 use anyhow::Result;
 use std::ffi::OsStr;
